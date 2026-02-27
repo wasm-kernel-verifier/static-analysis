@@ -1,4 +1,4 @@
-int if_simple()
+int hook_if_simple()
 {
     volatile int a = 2;
     if (a == 2) {
