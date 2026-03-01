@@ -1,11 +1,17 @@
 #![feature(exitcode_exit_method)]
+#![feature(iter_intersperse)]
+#![feature(new_range_api)]
+#![feature(range_into_bounds)]
 
 use std::{path::PathBuf, process::ExitCode};
 
 use clap::Parser;
 
+mod check;
 mod parser;
-mod symbolic;
+mod sym2;
+// mod symbolic;
+mod typed;
 
 #[derive(clap::Parser)]
 pub struct Opts {
@@ -15,7 +21,11 @@ pub struct Opts {
 }
 
 fn main() -> ExitCode {
-    tracing_subscriber::fmt::init();
+    tracing_subscriber::fmt::Subscriber::builder()
+        .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+        .without_time()
+        .try_init()
+        .unwrap();
 
     let opts = Opts::parse();
     if !opts.file.is_file() {
@@ -52,7 +62,7 @@ fn main() -> ExitCode {
         }
     };
 
-    let () = symbolic::execute(program);
+    let () = sym2::execute(program);
 
     ExitCode::SUCCESS
 }
